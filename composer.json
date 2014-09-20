@@ -1,0 +1,27 @@
+{
+    "name": "ndaidong/bella-php",
+    "version": "3.1.2",
+    "description": "A simple library for building web application",
+    "homepage": "https://github.com/techpush/bella.php",
+    "type": "library",
+    "minimum-stability": "dev",
+    "prefer-stable": true,
+    "license": "MIT",
+    "require": {
+		"php": ">=5.5"
+    },
+    "require-dev": {
+		
+    },
+    "authors": [
+        {
+            "name": "Dong Nguyen",
+            "email": "ndaidong@techpush.net"
+        }
+    ],
+    "autoload": {
+        "psr-0": {
+            "Bella\\": "src/"
+        }
+    }
+}
