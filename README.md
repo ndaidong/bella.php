@@ -110,7 +110,7 @@ BellaPHP uses Handlebars as template engine, /app/views/layouts/article.html loo
 
       <div class="article-title" itemprop="name">{{{article.title}}}</div>
       <div class="article-summary">
-          <span class="article-pubTime" value="{{datetime}}" itemprop="datePublished" content="{{datetime}}">
+          <span class="article-pubTime" itemprop="datePublished">
               {{article.datetime}}
           </span>,
           <span itemprop="author" itemscope itemtype="http://schema.org/Person">
