@@ -3,7 +3,7 @@ bella.php
 
 A lightweight PHP library for quickly building web application.
 
-BellaPHP is a set of useful toolkit that can help you handle almost things, such as: modular, routing, database, curl, file/directory, device detection, and other stuff.
+BellaPHP is a very simple toolkit that can help you handle something like modular, routing, database, curl, file/directory, device detection, and other stuff.
 
 Very easy to install bella.php with composer.phar
 
