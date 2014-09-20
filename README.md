@@ -8,7 +8,7 @@ BellaPHP is a very simple toolkit that can help you handle something like modula
 Very easy to install bella.php with composer.phar
 
       "require": {
-          "techpush/bella-php": "dev-master"
+          "techpush/bella.php": "dev-master"
       }
   
 
