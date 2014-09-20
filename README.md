@@ -49,7 +49,7 @@ In the /app/controllers/article.php, you define a controller as below:
       	
       	public function parse(){
       		$this->route('/:alias/:id', function($alias, $id){
-      			if(!!$id || !!$alias){
+      			if(!!$id){
       				  $h = $this->loadHandler();
       				  return $h->run($alias, $id);
       			}
