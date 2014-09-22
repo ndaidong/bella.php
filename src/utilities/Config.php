@@ -117,7 +117,7 @@ class Config{
 			ini_set ('display_errors', 'Off');
 		}		
 
-		echo json_encode(self::$config);exit;
+		//echo json_encode(self::$config);exit;
 	}
 	
 	public static function get($key){

@@ -313,8 +313,6 @@ class Bella{
             return Bella::shutdown();
         }
         
-        $q = Config::get('global');
-        Response::json($q);
         Session::init();
         Path::init();
         Request::init();
