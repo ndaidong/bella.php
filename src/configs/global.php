@@ -11,7 +11,12 @@ return array(
 	'controllers_dir'	=> 'app/controllers/',
 	'models_dir'		=> 'app/models/',
 	'views_dir'			=> 'app/views/',
-	'special_page_dir'	=> 'app/errors/',
+	'utils_dir'			=> 'app/utils/',
+	'lib_dir'			=> 'app/libs/',
+	'plugin_dir'		=> 'app/plugins/',
+	'sdk_dir'			=> 'app/sdks/',
+	'requires_dir'		=> 'app/requires/',
+	'error_pages_dir'	=> 'app/errors/',
 	
 	'storage_dir'		=> 'storage/',
 	

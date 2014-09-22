@@ -188,7 +188,7 @@ class Bella{
         
 		$MSG_404 = 'The requested URL <span class="path">/'.$url .'</span> was not found on this server.';
 		$config = Config::get('global');
-		require($config->special_page_dir.'404.php');
+		require($config->error_pages_dir.'404.php');
 		exit;	
 	}	
 	public static function deny(){
@@ -198,12 +198,12 @@ class Bella{
         
 		$MSG_401 = 'We\'re sorry, you do not have sufficient permissions to access this page.';
 		$config = Config::get('global');
-		require($config->special_page_dir.'401.php');
+		require($config->error_pages_dir.'401.php');
 		exit;	
 	}	
 	public static function shutdown(){
 		$config = Config::get('global');
-		require($config->special_page_dir.'maintenance.php');
+		require($config->error_pages_dir.'maintenance.php');
 		exit;	
 	}
 	public static function json($s, $end=true){
@@ -313,6 +313,8 @@ class Bella{
             return Bella::shutdown();
         }
         
+        $q = Config::get('global');
+        Response::json($q);
         Session::init();
         Path::init();
         Request::init();

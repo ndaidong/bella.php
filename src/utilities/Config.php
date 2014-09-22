@@ -13,6 +13,13 @@ class Config{
 		$condir = $path.'/../configs/';
 		
 		$settings = parse_ini_file($condir.'bella.ini');
+		
+		$appSettings = parse_ini_file('conf/app.ini');
+		if(!!$appSettings){
+			foreach($appSettings as $key=>$var){
+				$settings[$key] = $var;
+			}
+		}
 
 		$protocol = 'http://';
 		$svname = $_SERVER['SERVER_NAME'];
@@ -22,11 +29,12 @@ class Config{
 			$svname = implode('.', $_sva);
 		}
 
-		self::$config = array(
+		self::$config = [
 			'active'	=> $settings['active']*1,
 			'engine'	=> $settings['engine'],
 			'version'	=> $settings['version'],
 			'debug'		=> $settings['debug'],
+			'pubdomain'	=> $settings['domain'],
 			'global' 	=> include_once $condir.'global.php',
 			'api' 		=> include_once $condir.'api.php',
 			'databases' => include_once $condir.'databases.php',
@@ -35,7 +43,7 @@ class Config{
 			'hostname'	=> $svname,
 			'domain'	=> $svname,
 			'server'	=> $protocol.$svname,
-		);
+		];
 		
 		$env_configs = [
 			'global' 	=> null,
@@ -46,7 +54,11 @@ class Config{
 		
 		$environ = $settings['env'];
 		
-		$pos = strripos($svname, 'techpush.net');
+		$publicDomain = isset($settings['domain'])?$settings['domain']:'';
+		$pos = false;
+		if(!!$publicDomain){
+			$pos = strripos($svname, $settings['domain']);
+		}
 		
 		if($pos===false){
 			$environ = 'development';
@@ -54,6 +66,8 @@ class Config{
 		else{
 			$environ = 'production';
 		}
+		
+		self::$config['environment'] = $environ;
 		
 		$env = 'conf/'.$environ.'/';
 		
@@ -82,7 +96,7 @@ class Config{
 								self::$config[$key][$_k] = $tmp;
 							}
 							else if($key=='global'){
-								self::$config[$_k] = $_v;
+								self::$config['global'][$_k] = $_v;
 							}
 						}
 					}
@@ -92,6 +106,7 @@ class Config{
 				}
 			}
 		}
+		//self::$config['global']['publicDomain'] = 
 		
 		if(self::$config['debug']===1 || $environ =='development'){
 			error_reporting (E_ALL);
@@ -102,7 +117,7 @@ class Config{
 			ini_set ('display_errors', 'Off');
 		}		
 
-		//echo json_encode(self::$config);exit;
+		echo json_encode(self::$config);exit;
 	}
 	
 	public static function get($key){
