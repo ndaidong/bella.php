@@ -8,9 +8,6 @@ trait Session{
 	
 	public static function init(){	
 		
-		//$session = new DB_SESSION;  
-		//$session->init();
-		
 		$rootDomain = '.'.Config::get('domain');
 		ini_set('session.gc_maxlifetime', 60*60*24*30);
 		$currentCookieParams = session_get_cookie_params();
@@ -21,7 +18,10 @@ trait Session{
 			$currentCookieParams["secure"], 
 			$currentCookieParams["httponly"] 
 		); 
-		session_name('__'.Config::get('global')->application->name.'__');
+		$sn = Config::get('global')->application->alias;
+		if(!!$sn){
+			session_name('__'.strtoupper($sn).'__');
+		}
 		
 		if(!static::get('initialized')){
 			static::set('initialized', 1);

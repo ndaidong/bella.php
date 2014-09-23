@@ -90,7 +90,7 @@ class Remote{
 		return $result;
 	}
 	
-	private static function getRandomUserAgent(){
+	public static function getRandomUserAgent(){
 		$a = [
 			'Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)',
 			'Googlebot/2.1 (+http://www.googlebot.com/bot.html)',

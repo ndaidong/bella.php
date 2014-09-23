@@ -9,7 +9,7 @@ trait File{
 			if(!is_string($data)){
 				 $data = json_encode($data);
 			}			
-			fwrite($f, $data, 518000); 
+			fwrite($f, $data); 
 			fclose($f);
 			return true;
 		}

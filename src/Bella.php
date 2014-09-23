@@ -44,6 +44,30 @@ class Bella{
 		return $str;
 	} 
 	
+	 public static function trim_all( $str , $what = NULL , $with = ' ' ){
+        if($what === NULL){
+            $what = "\\x00-\\x20";
+        }
+        return trim( preg_replace( "/[".$what."]+/" , $with , $str ) , $what);
+    }
+    
+    public static function oval($arr){
+        if(isset($arr)){
+            $ob = array();
+            foreach($arr as $key=>$val){
+                if(is_null($val)){
+                    $val = '';
+                }
+                else if(is_numeric($val)){
+                    $val*=1;
+                }
+                $ob[$key] = $val;
+            }
+            return (object) $ob;
+        }
+        return false;
+    }
+    
 	public static function makeAlias($s){
 		$x = static::stripAccent($s);
 		$x = static::removeSpecialChar($x);
@@ -313,6 +337,12 @@ class Bella{
             return Bella::shutdown();
         }
         
+        $q = Config::get('global');
+        if(is_dir($q->requires_dir)){
+			foreach(glob($q->requires_dir.'*.php') as $file){
+				 include_once $file;
+			}
+		}
         Session::init();
         Path::init();
         Request::init();
