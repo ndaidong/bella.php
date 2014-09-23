@@ -196,15 +196,36 @@ class View{
 		$arr = array();
 		foreach($this->data['css'] as $file){
 			if(!!$file){
+				if(strpos($file, '.css')===false){
+					$file = $file.'.css';
+				}
 				array_push($arr, $path.$file);				
 			}
 		}
 		if(count($arr)>0){
-			$aStyle = [];
-			foreach($arr as $file){
-				array_push($aStyle, '<link rel="stylesheet" type="text/css" href="'.$file.'">');
+			if(isset($conf->cssCacheDir)){
+				$cssKey = md5(implode(";", $arr));
+				$file = $conf->cssCacheDir.$cssKey;
+				$style = '';
+				foreach($arr as $f){
+					$f = substr($f, 1);
+					if(file_exists($f)){
+						$style.= File::read($f);
+					}
+				}
+				$style = preg_replace('!/\*[^*]*\*+([^/][^*]*\*+)*/!', '', $style);
+				$style = str_replace(': ', ':', $style);
+				$style = str_replace(array("\r\n", "\r", "\n", "\t", '  ', '    ', '    '), '', $style);					
+				File::write($file, $style);
+				$sTemplate = str_replace('{@STYLE}', '<link rel="stylesheet" type="text/css" href="'.$conf->baseDir.'cstyle/'.$cssKey.'">', $sTemplate);
 			}
-			$sTemplate = str_replace('{@STYLE}', implode("\n    ", $aStyle), $sTemplate);
+			else{
+				$aStyle = [];
+				foreach($arr as $file){
+					array_push($aStyle, '<link rel="stylesheet" type="text/css" href="'.$file.'">');
+				}
+				$sTemplate = str_replace('{@STYLE}', implode("\n    ", $aStyle), $sTemplate);
+			}
 		}
 		else{
 			$sTemplate = str_replace('{@STYLE}', '', $sTemplate);
@@ -221,6 +242,9 @@ class View{
 		if(count($arr)>0){
 			$aScript = [];
 			foreach($arr as $file){
+				if(strpos($file, '.js')===false){
+					$file = $file.'.js';
+				}
 				array_push($aScript, '<script type="text/javascript" src="'.$file.'"></script>');
 			}
 			$sTemplate = str_replace('{@SCRIPT}', implode("\n    ", $aScript), $sTemplate);
