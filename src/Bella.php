@@ -330,7 +330,7 @@ class Bella{
 		}
 	}
 	
-	public static function initialize(){
+	public static function initialize($callback=false){
 		Config::init();
 		
 		if(Config::get('active')===0){
@@ -347,19 +347,8 @@ class Bella{
         Path::init();
         Request::init();
         
-        $cls = false;
-        $path = Path::get(0);
-       
-		if(!$path){
-			$cls = Bella::loadCoordinator('index');
-		}
-		else{
-			$cls = Bella::loadCoordinator($path);
-		}
-		if(!$cls){
-			return Bella::end();
+		if(!!$callback){
+			$callback();
 		}
 	}
 }
-
-Bella::initialize();

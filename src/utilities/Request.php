@@ -8,14 +8,17 @@ trait Request{
 	private static $header = [];
 	
 	public static function init(){
-		self::$data = array_merge($_GET, $_POST);
+		
+		parse_str(file_get_contents("php://input"), static::$data);
+		
+		static::$data = array_merge($_GET, $_POST);
 		
 		$met = $_SERVER['REQUEST_METHOD'];
 		
-		self::$header['method'] = $met;
+		static::$header['method'] = $met;
 		
 		$path = str_replace('?'.$_SERVER['QUERY_STRING'], '', $_SERVER['REQUEST_URI']);
-		self::$header['path'] = $path;
+		static::$header['path'] = $path;
 		
 		$queries = [];
 		$sQuery = $_SERVER['QUERY_STRING'];
@@ -36,30 +39,18 @@ trait Request{
 				}
 			}
 		}
-		self::$header['query'] = (object) $queries;
-		
-		$posts = [];
-		if($met=='POST'){
-			$a = explode('&', $_POST);
-			if(count($a)>0){
-				foreach($a as $b){
-					$c = explode('=', $b);
-					$posts[$c[0]] = $c[1];
-				}
-			}
-		}
-		self::$header['post'] = (object) $posts;
+		static::$header['query'] = (object) $queries;
 	}
 
 	public static function input($key = ''){
 		if(!!$key){
-			return isset(self::$data[$key])?self::$data[$key]:'';
+			return isset(static::$data[$key])?static::$data[$key]:'';
 		}
-		return self::$data;
+		return static::$data;
 	}
 	
 	public static function getHeader(){
-		return self::$header;
+		return static::$header;
 	}
 }
 

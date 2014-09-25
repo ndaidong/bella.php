@@ -140,7 +140,7 @@ class View{
 		}
 	}
 
-	public function render($data){
+	public function render($data=false){
 		$output = Request::input('output');
 		if($output=='json'){
 			return Response::json($data);
@@ -155,7 +155,7 @@ class View{
 		return str_replace(array_keys($replace), array_values($replace), $subject);    
 	} 
 	
-	public function renderHTML($data){
+	public function renderHTML($data=false){
 		
 		$meta = $this->data['meta'];
 		$header = $this->data['header'];
@@ -191,23 +191,38 @@ class View{
 		
 		$conf = Config::get('global');
 		
+		// handling CSS files
 		$path = $conf->baseDir.$conf->public_dir.'css/';
 		
-		$arr = array();
+		$tplStyle = '';
+		$remoteCSS = [];
+		$localCSS = [];
 		foreach($this->data['css'] as $file){
 			if(!!$file){
-				if(strpos($file, '.css')===false){
-					$file = $file.'.css';
+				if(strpos($file, 'http://')===0 || strpos($file, 'https://')===0){
+					array_push($remoteCSS, $file);
 				}
-				array_push($arr, $path.$file);				
+				else{
+					if(strpos($file, '.css')===false){
+						$file = $file.'.css';
+					}
+					array_push($localCSS, $path.$file);			
+				}	
 			}
 		}
-		if(count($arr)>0){
+		if(count($remoteCSS)>0){
+			foreach($remoteCSS as $rfile){
+				$tplStyle.='<link rel="stylesheet" type="text/css" href="'.$rfile.'">';
+			}
+		}
+		
+		if(count($localCSS)>0){
 			if(isset($conf->cssCacheDir)){
-				$cssKey = md5(implode(";", $arr));
+				$aStyle = [];
+				$cssKey = md5(implode(";", $localCSS));
 				$file = $conf->cssCacheDir.$cssKey;
 				$style = '';
-				foreach($arr as $f){
+				foreach($localCSS as $f){
 					$f = substr($f, 1);
 					if(file_exists($f)){
 						$style.= File::read($f);
@@ -217,20 +232,21 @@ class View{
 				$style = str_replace(': ', ':', $style);
 				$style = str_replace(array("\r\n", "\r", "\n", "\t", '  ', '    ', '    '), '', $style);					
 				File::write($file, $style);
-				$sTemplate = str_replace('{@STYLE}', '<link rel="stylesheet" type="text/css" href="'.$conf->baseDir.'cstyle/'.$cssKey.'">', $sTemplate);
+				$tplStyle.='<link rel="stylesheet" type="text/css" href="'.$conf->baseDir.'cstyle/'.$cssKey.'">';
 			}
 			else{
 				$aStyle = [];
-				foreach($arr as $file){
+				foreach($localCSS as $file){
 					array_push($aStyle, '<link rel="stylesheet" type="text/css" href="'.$file.'">');
 				}
-				$sTemplate = str_replace('{@STYLE}', implode("\n    ", $aStyle), $sTemplate);
+				$tplStyle.=implode("\n    ", $aStyle);
 			}
 		}
-		else{
-			$sTemplate = str_replace('{@STYLE}', '', $sTemplate);
-		}
 		
+		$sTemplate = str_replace('{@STYLE}', $tplStyle, $sTemplate);
+		
+		
+		// handling JS files
 		$path = $conf->baseDir.$conf->public_dir.'js/';
 		
 		$arr = array();
@@ -261,67 +277,6 @@ class View{
 		Response::html($this->engine->render($s, $data));
 	}
 
-	public function refresh($html, $layout=''){
-		
-		$s = str_replace('{@CONTEXT}', trim($layout), $html);
-		
-		if(!!$this->textData){
-			foreach($this->textData as $key=>$value){
-				$s = str_replace('{'.strtoupper($key).'}', $value, $s);
-			}
-		}
-		$config = Config::get('global');
-		$baseDir = $config->baseDir;
-		$assetPath = $this->assetPath;
-		$strCSS = '';
-		
-		$arr = array();
-		foreach($this->css as $item){
-			if(!!$item){
-				if(strpos($assetPath, 'assets')===false && strpos($item, 'assets')===false){
-					$f = 'clients'.$assetPath.$item;
-				}
-				else{
-					if(strpos($item, 'assets')===false){
-						$f = 'Master'.$assetPath.$item;
-					}
-					else{
-						$f = 'Master'.$item;
-					}
-				}
-				array_push($arr, $f);				
-			}
-		}
-		
-		if(count($arr)>0){
-			$strCSS.=implode(";", $arr);
-		}
-		$cssKey = md5($strCSS);
-		$file = 'resources/cache/stylesheet/'.$cssKey;
-		//if(!file_exists($file)){
-			$style = '';
-			foreach($arr as $f){
-				if(file_exists($f)){
-					$style.= @file_get_contents($f);
-				}
-			}	
-							
-			File::write($file, $this->clean($style));
-		//}
-		if(count($arr)>0){
-			$s = str_replace('{@STYLE}', '<link rel="stylesheet" type="text/css" href="/css/?fs='.$cssKey.'">', $s);
-		}
-
-		$strAppData = 'var ADATA = '.(!!$this->appData?json_encode($this->appData):'{}');
-		
-		$s = str_replace('{@SCRIPTDATA}', $strAppData, $s);
-		$s = str_replace('{@BASEDIR}', $baseDir, $s);
-		$s = str_replace('{@VERSION}', $version, $s);
-		$s = str_replace('{@ROOT}', Config::get('server'), $s);
-		echo trim($s);
-		exit;
-	}
-	
 	private function clean($css){
 		$style = preg_replace('!/\*[^*]*\*+([^/][^*]*\*+)*/!', '', $css);
 		$style = str_replace(': ', ':', $style);

@@ -1,11 +1,12 @@
 <?php
 
+namespace Bella;
+
 trait Validator{
 	
 	public static function isValidUsername($username){
 		if(!!$username && strlen($username)>4 && strlen($username)<65){
 			$avoid = array(
-				'linksie', 
 				'user', 
 				'operator',
 				'moderator', 
@@ -92,26 +93,6 @@ trait Validator{
 	public static function isRandomKey($key='', $len=128){
 		if(!!$key && strlen($key)===$len){
 			return preg_match('/^[A-Za-z0-9]+$/', $key);
-		}
-		return false;
-	}
-	
-	public static function isValidConsumerName($name){
-		if(!!$name && strlen($name)>4 && strlen($name)<100){
-			$avoid = array(
-				'linksie',
-				'operator',
-				'moderator', 
-				'admin', 
-				'administer', 
-				'administrator', 
-				'system',
-				'system.admin',
-				'tester',
-			);
-			if(!in_array($name, $avoid)){
-				return preg_match('/^[A-Za-z]{1}([A-Za-z0-9]+)([\s]{1}?)([A-Za-z0-9]+)$/', $name);
-			}
 		}
 		return false;
 	}
