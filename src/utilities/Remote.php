@@ -82,7 +82,7 @@ class Remote{
 			curl_setopt($ch, CURLOPT_POST, 1);
 			curl_setopt($ch, CURLOPT_USERAGENT, static::getRandomUserAgent());
 			curl_setopt($ch, CURLOPT_CONNECTTIMEOUT , 0);
-			curl_setopt($ch, CURLOPT_TIMEOUT, 30);
+			curl_setopt($ch, CURLOPT_TIMEOUT, 120);
 			$result = @curl_exec($ch);
 			curl_close($ch);
 		}
