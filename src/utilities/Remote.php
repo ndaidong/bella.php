@@ -16,6 +16,7 @@ class Remote{
 		if(false=== $handle){
 			return false;
 		}
+		set_time_limit(0);
 		curl_setopt($handle, CURLOPT_HEADER, false);
 		curl_setopt($handle, CURLOPT_FAILONERROR, true);
 		curl_setopt($handle, CURLOPT_NOBODY, true);
@@ -36,6 +37,8 @@ class Remote{
 			curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
 			curl_setopt($ch, CURLOPT_MAXREDIRS, 10);
 			curl_setopt($ch, CURLOPT_USERAGENT, static::getRandomUserAgent());
+			curl_setopt($ch, CURLOPT_CONNECTTIMEOUT , 0);
+			curl_setopt($ch, CURLOPT_TIMEOUT, 30);
 			$type = curl_getinfo($ch, CURLINFO_CONTENT_TYPE);
 			$s = curl_exec($ch);
 			curl_close($ch);
@@ -44,7 +47,7 @@ class Remote{
 			}
 		}
 		else if(!$typeOnly && ini_get('allow_url_fopen') == '1'){
-		  @$data = file_get_contents($url);
+			@$data = file_get_contents($url);
 			if($data){$s = $data;}
 		}
 		else{
@@ -68,6 +71,9 @@ class Remote{
 			$s = implode('&', $arr);
 		}
 		if(function_exists('curl_init')){
+			
+			set_time_limit(0);
+			
 			$ch = @curl_init($url);                                                                      
 			curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "POST");                                                                     
 			curl_setopt($ch, CURLOPT_POSTFIELDS, $s);                                                              
@@ -75,6 +81,8 @@ class Remote{
 			curl_setopt($ch, CURLOPT_FAILONERROR, !!$wait?0:1);
 			curl_setopt($ch, CURLOPT_POST, 1);
 			curl_setopt($ch, CURLOPT_USERAGENT, static::getRandomUserAgent());
+			curl_setopt($ch, CURLOPT_CONNECTTIMEOUT , 0);
+			curl_setopt($ch, CURLOPT_TIMEOUT, 30);
 			$result = @curl_exec($ch);
 			curl_close($ch);
 		}
