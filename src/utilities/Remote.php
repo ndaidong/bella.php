@@ -38,7 +38,7 @@ class Remote{
 			curl_setopt($ch, CURLOPT_MAXREDIRS, 10);
 			curl_setopt($ch, CURLOPT_USERAGENT, static::getRandomUserAgent());
 			curl_setopt($ch, CURLOPT_CONNECTTIMEOUT , 0);
-			curl_setopt($ch, CURLOPT_TIMEOUT, 30);
+			curl_setopt($ch, CURLOPT_TIMEOUT, 300);
 			$type = curl_getinfo($ch, CURLINFO_CONTENT_TYPE);
 			$s = curl_exec($ch);
 			curl_close($ch);
@@ -82,7 +82,7 @@ class Remote{
 			curl_setopt($ch, CURLOPT_POST, 1);
 			curl_setopt($ch, CURLOPT_USERAGENT, static::getRandomUserAgent());
 			curl_setopt($ch, CURLOPT_CONNECTTIMEOUT , 0);
-			curl_setopt($ch, CURLOPT_TIMEOUT, 120);
+			curl_setopt($ch, CURLOPT_TIMEOUT, 300);
 			$result = @curl_exec($ch);
 			curl_close($ch);
 		}
