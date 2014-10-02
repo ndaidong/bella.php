@@ -274,6 +274,7 @@ class Bella{
 					Except::showError("Error : Called class or method is undefined.");
 				}		
 			}
+			$ctrl->start();
 		}
 		return $ctrl;
 	}

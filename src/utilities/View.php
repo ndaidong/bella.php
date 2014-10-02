@@ -175,7 +175,7 @@ class View{
 		$sTemplate = str_replace('{{url}}', $header->url, $sTemplate);
 		$sTemplate = str_replace('{{canonical}}', $header->canonical, $sTemplate);
 		$sTemplate = str_replace('{{image}}', $header->image, $sTemplate);
-		$sTemplate = str_replace('{{creator}}', isset($header->creator)?$header->creator:$header->author->name, $sTemplate);
+		$sTemplate = str_replace('{{creator}}', isset($header->creator)?$header->creator:isset($header->author)?(is_object($header->author)?$header->author->name:$header->author):'', $sTemplate);
 		$sTemplate = str_replace('{{siteURL}}', $meta->home, $sTemplate);
 		
 		$jsData = 'var SDATA = '.json_encode([

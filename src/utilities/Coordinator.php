@@ -6,6 +6,8 @@ class Coordinator{
 	
 	private $AS = 0; // accessible scope, default is 0 that means no limit
 	private $_name = '';
+	
+	protected $routes = [];
 
 	public function setAccessibleScope($as){
 		$this->AS = $as;
@@ -54,34 +56,43 @@ class Coordinator{
 	}
 
 	public function route($regex, $callback){
+		$this->routes[$regex] = $callback;
+	}
+	
+	public function start(){
 		$routes = Path::get();
 		if($routes[0]===$this->_name){
 			array_splice($routes, 0, 1);
 			
-			$params = explode('/', $regex);
-			if(count($params)>0){
-				if($params[0]===''){
-					array_splice($params, 0, 1);
-				}
-				
-				$data = [];
-				
-				for($i=0;$i<count($params);$i++){
-					$sec = $params[$i];
-					if(strpos($sec, ':')===false){
-						continue;
+			foreach($this->routes as $regex=>$callback){
+				$params = explode('/', $regex);
+				if(count($params)>0){
+					
+					if($params[0]===''){
+						array_splice($params, 0, 1);
 					}
-					else{
-						$m = str_replace(':', '', $sec);
-						$data[$m] = $routes[$i];
+					
+					$data = [];
+					$hasAction = false;
+					
+					for($i=0;$i<count($params);$i++){
+						$sec = $params[$i];
+						if(strpos($sec, ':')===false){
+							if($sec===$routes[$i]){
+								$hasAction = true;
+							}
+						}
+						else{
+							$m = str_replace(':', '', $sec);
+							$data[$m] = $routes[$i];
+						}
 					}
-				}
-				if(!!$data){
-					return call_user_func_array($callback, $data);
+					if(!!$data || !!$hasAction){
+						call_user_func_array($callback, $data);
+					}
 				}
 			}
-			return call_user_func_array($callback, []);
-		}
+		}		
 	}
 		
 	public function parse(){
