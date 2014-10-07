@@ -26,9 +26,9 @@ class View{
 		Handlebars\Autoloader::register();
 		$this->engine = new Handlebars\Handlebars;
 		
-		$config = Config::get('global');
+		$config = Config::get('settings');
 		
-		$header = $config->application;
+		$header = Config::get('application');
 		$this->data['header'] = (object) $header;
 		$this->data['textData'] = (object) [];
 		$this->data['scriptData'] = (object) [];
@@ -47,7 +47,7 @@ class View{
 	
 	public function setLayout($name, $path=''){
 		if(!$path){
-			$path = Config::get('global')->views_dir.'layout/';
+			$path = Config::get('settings')->views_dir.'layout/';
 		}
 		if(strpos($name, '.php')===false && strpos($name, '.htm')===false && strpos($name, '.xml')===false){
 			$name.='.html';
@@ -57,7 +57,7 @@ class View{
 	
 	public function setTemplate($name, $path=''){
 		if(!$path){
-			$path = Config::get('global')->views_dir.'templates/';
+			$path = Config::get('settings')->views_dir.'templates/';
 		}
 		if(strpos($name, '.php')===false && strpos($name, '.htm')===false && strpos($name, '.xml')===false){
 			$name.='.html';
@@ -189,7 +189,7 @@ class View{
 		]);
 		$sTemplate = str_replace('{@SCRIPTDATA}', $jsData, $sTemplate);
 		
-		$conf = Config::get('global');
+		$conf = Config::get('settings');
 		
 		// handling CSS files
 		$path = $conf->baseDir.$conf->public_dir.'css/';

@@ -18,7 +18,7 @@ trait Session{
 			$currentCookieParams["secure"], 
 			$currentCookieParams["httponly"] 
 		); 
-		$sn = Config::get('global')->application->alias;
+		$sn = Config::get('application')->alias;
 		if(!!$sn){
 			session_name('__'.strtoupper($sn).'__');
 		}

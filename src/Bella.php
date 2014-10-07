@@ -135,7 +135,7 @@ class Bella{
 		if(!$time){
 			$time = time();
 		}
-		$format = !$sformat?Config::get('global')->dateFormat:$sformat;
+		$format = !$sformat?Config::get('settings')->dateFormat:$sformat;
 		return date($format, $time);
 	}
 	
@@ -188,7 +188,7 @@ class Bella{
 	}
 	
 	public static function redirect($u='', $external=false){
-		$config = Config::get('global');
+		$config = Config::get('settings');
 		if(!$u){
 			$u='';
 		}
@@ -211,7 +211,7 @@ class Bella{
 		header($_SERVER["SERVER_PROTOCOL"]." 404 Not Found");
         
 		$MSG_404 = 'The requested URL <span class="path">/'.$url .'</span> was not found on this server.';
-		$config = Config::get('global');
+		$config = Config::get('settings');
 		require($config->error_pages_dir.'404.php');
 		exit;	
 	}	
@@ -221,12 +221,12 @@ class Bella{
         header('WWW-Authenticate: OAuth realm=""');
         
 		$MSG_401 = 'We\'re sorry, you do not have sufficient permissions to access this page.';
-		$config = Config::get('global');
+		$config = Config::get('settings');
 		require($config->error_pages_dir.'401.php');
 		exit;	
 	}	
 	public static function shutdown(){
-		$config = Config::get('global');
+		$config = Config::get('settings');
 		require($config->error_pages_dir.'maintenance.php');
 		exit;	
 	}
@@ -257,7 +257,7 @@ class Bella{
 			$ctrl->setName($c);	
 		}
 		else{
-			$dir = Config::get('global')->controllers_dir;
+			$dir = Config::get('settings')->controllers_dir;
 			$f = $dir.$c.'.php';
 			if(file_exists($f)){
 				include $f;
@@ -266,6 +266,7 @@ class Bella{
 		if(class_exists($class)){
 			$ctrl = new $class();
 			$ctrl->setName($c);
+			
 			if($m){
 				if(method_exists($ctrl, $m)){
 					$ctrl->$m();
@@ -273,8 +274,8 @@ class Bella{
 				else{
 					Except::showError("Error : Called class or method is undefined.");
 				}		
+				$ctrl->start();
 			}
-			$ctrl->start();
 		}
 		return $ctrl;
 	}
@@ -285,7 +286,7 @@ class Bella{
 			return new $class();
 		}
 		else{
-			$dir = Config::get('global')->models_dir;
+			$dir = Config::get('settings')->models_dir;
 			$f = $dir.$h.'.php';
 			if(file_exists($f)){
 				include $f;
@@ -321,24 +322,27 @@ class Bella{
 		}
 	}
 	
-	public static function loadPackage($path=''){
+	public static function loadPackage($path='', $callback=null){
 		$dir = 'vendor/';
 		if(!!$path){
 			$file = $dir.$path;
 			if(file_exists($file)){
 				include_once($file);
+				if(!!$callback && function_exists($callback)){
+					$callback();
+				}
 			}
 		}
 	}
 	
-	public static function initialize($callback=false){
+	public static function initialize($onstart=null, $onfly=null){
 		Config::init();
 		
 		if(Config::get('active')===0){
             return Bella::shutdown();
         }
         
-        $q = Config::get('global');
+        $q = Config::get('settings');
         if(is_dir($q->requires_dir)){
 			foreach(glob($q->requires_dir.'*.php') as $file){
 				 include_once $file;
@@ -348,8 +352,25 @@ class Bella{
         Path::init();
         Request::init();
         
-		if(!!$callback){
-			$callback();
+		if(isset($onstart) && is_callable($onstart)){
+			$onstart();
+		}
+		
+		$c = Path::get(0);
+		if(!$c){
+			Bella::loadCoordinator('index');
+		}
+		else{
+			$dir = Config::get('settings')->controllers_dir;
+			$f = $dir.$c.'.php';
+			if(file_exists($f)){
+				Bella::loadCoordinator($c);
+			}
+			else{
+				if(isset($onfly) && is_callable($onfly)){
+					return $onfly($c);
+				}
+			}
 		}
 	}
 }

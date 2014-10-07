@@ -6,7 +6,7 @@ trait Cookie{
 	
     public static function set($name, $value, $exp=0){
         $_COOKIE[$name] = $value; 
-        $path = Config::get('global')->cookiePath;
+        $path = Config::get('settings')->cookiePath;
         return setcookie($name, $value, $exp, $path, '.'.Config::get('domain'));
     } 
     public static function get($name){

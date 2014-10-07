@@ -54,45 +54,14 @@ class Coordinator{
 		}
 		return $this->deny();
 	}
-
-	public function route($regex, $callback){
-		$this->routes[$regex] = $callback;
+	
+	protected function route($method, $regex, $callback){
+		Router::add($method, $this->_name.'/'.$regex, $callback);
 	}
 	
 	public function start(){
-		$routes = Path::get();
-		if($routes[0]===$this->_name){
-			array_splice($routes, 0, 1);
-			
-			foreach($this->routes as $regex=>$callback){
-				$params = explode('/', $regex);
-				if(count($params)>0){
-					
-					if($params[0]===''){
-						array_splice($params, 0, 1);
-					}
-					
-					$data = [];
-					$hasAction = false;
-					
-					for($i=0;$i<count($params);$i++){
-						$sec = $params[$i];
-						if(strpos($sec, ':')===false){
-							if($sec===$routes[$i]){
-								$hasAction = true;
-							}
-						}
-						else{
-							$m = str_replace(':', '', $sec);
-							$data[$m] = $routes[$i];
-						}
-					}
-					if(!!$data || !!$hasAction){
-						call_user_func_array($callback, $data);
-					}
-				}
-			}
-		}		
+		Router::mount($this->_name);
+		Router::parse();
 	}
 		
 	public function parse(){

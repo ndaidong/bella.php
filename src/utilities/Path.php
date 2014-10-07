@@ -7,7 +7,7 @@ class Path{
 	private static $path = [];
 	
 	public static function init(){
-		$config = Config::get('global');
+		$config = Config::get('settings');
 		$path = str_replace('?'.$_SERVER['QUERY_STRING'], '', $_SERVER['REQUEST_URI']);
 		$a = explode('/',$path);
 		array_shift($a);
