@@ -51,7 +51,7 @@ class Config{
 				$environ = 'development';
 			}
 			else{
-				if(strripos($svname, 'test-')===false && strripos($svname, 'test.')===false){
+				if(strpos($svname, 'test-')===false && strpos($svname, 'test.')===false){
 					$environ = 'production';
 				}
 				else{
@@ -59,6 +59,7 @@ class Config{
 				}
 			}
 			$bc->environment = $environ;
+			$bc->svname = $svname;
 		}
 		
 		$ac = static::getIni('conf/'.$environ.'.ini');
