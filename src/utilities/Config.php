@@ -33,7 +33,15 @@ class Config{
 		$environ = $bc->environment;
 		
 		if(!$environ || $environ=='labs'){
-			$publicDomain = isset($bc->application->domain)?$bc->application->domain:'';
+			
+			if(file_exists('conf/app.ini')){
+				$tmp = static::getIni('conf/app.ini');
+				foreach($tmp as $_k=>$_v){
+					$bc->$_k = $_v;
+				}
+			}
+			
+			$publicDomain = isset($bc->pubDomain)?$bc->pubDomain:'';
 			$pos = false;
 			if(!!$publicDomain){
 				$pos = strripos($svname, $publicDomain);
