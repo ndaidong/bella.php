@@ -59,7 +59,6 @@ class Config{
 				}
 			}
 			$bc->environment = $environ;
-			$bc->svname = $svname;
 		}
 		
 		$ac = static::getIni('conf/'.$environ.'.ini');
