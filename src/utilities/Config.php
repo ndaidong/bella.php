@@ -91,7 +91,6 @@ class Config{
 			error_reporting (E_ALL);
 			ini_set ('display_errors', 'On');
 		}		
-
 		//echo json_encode(self::$config);exit;
 	}
 	

@@ -21,7 +21,6 @@ trait Response{
 			'html' => 'content-type:text/html;charset=utf-8',
 			'xml' => 'content-type:text/xml;charset=utf-8'
 		];
-		ob_end_clean();
 		header($ct[$contentType]);
 		echo trim($content);
 		exit();
