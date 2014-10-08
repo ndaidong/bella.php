@@ -92,7 +92,7 @@ class Config{
 			ini_set ('display_errors', 'On');
 		}		
 
-		echo json_encode(self::$config);exit;
+		//echo json_encode(self::$config);exit;
 	}
 	
 	public static function get($key){
