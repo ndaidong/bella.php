@@ -11,9 +11,9 @@ trait MySQL{
 	protected static $pass		=	null;
 	
 	public static function insert($table, $fields, $values=null){
-		$arrFields = array();
-		$arrValues = array();
-		$_undefined = array();
+		$arrFields = [];
+		$arrValues = [];
+		$_undefined = [];
 		if(!!$fields){
 			if(!!$values && is_array($fields) && is_array($values) && count($fields)==count($values)){
 				foreach($fields as $item){
@@ -42,8 +42,8 @@ trait MySQL{
 	}
 
 	public static function update($table, $fields, $where=false, $condition=false){
-		$arrFields = array();
-		$arrValues = array();
+		$arrFields = [];
+		$arrValues = [];
 		if(!!$fields){
 			foreach($fields as $key=>$value){
 				array_push($arrFields, "$key=?");
@@ -121,7 +121,7 @@ trait MySQL{
 
 		$result = static::query($sql);
 		if(!!$result && is_array($result) && count($result)>0){
-			$temp = array();
+			$temp = [];
 			foreach($result as $item){
 				array_push($temp, Bella::oval($item));
 			}
@@ -133,7 +133,7 @@ trait MySQL{
 	public static function last($table, $limit=15, $order=false){
 		$_order = '';
 		if($order){
-			$_a = array();
+			$_a = [];
 			foreach($order as $k=>$v){
 				array_push($_a, $k.' '.$v);
 			}
@@ -142,7 +142,7 @@ trait MySQL{
 		$sql = "Select * from $table $_order limit 0, $limit";
 		$result = static::query($sql);
 		if(!!$result && is_array($result) && count($result)>0){
-			$temp = array();
+			$temp = [];
 			foreach($result as $item){
 				array_push($temp, Bella::oval($item));
 			}
@@ -166,14 +166,19 @@ trait MySQL{
 	}
 
 		
-	public static function connect(){
+	public static function connect($database=false){
 		if(!static::$server && !static::$db){
-			$_databases = Config::get('databases');
-			$_mysql = (object) $_databases->mysql;
+			if(!!$database){
+				$_mysql = $database;
+			}
+			else{
+				$_databases = Config::get('databases');
+				$_mysql = (object) $_databases->mysql;
+			}
 			static::$server	= $_mysql->server;
 			static::$db		= $_mysql->dbname;
-			static::$user		= $_mysql->username;
-			static::$pass		= $_mysql->password;
+			static::$user	= $_mysql->username;
+			static::$pass	= $_mysql->password;
 		}
 		if(!static::$connection){
 			$c = @mysql_connect(static::$server, static::$user, static::$pass);
@@ -196,7 +201,7 @@ trait MySQL{
 	
 	public static function execute($sql){
 		static::connect();
-		$r = array();
+		$r = [];
 		if($data = @mysql_query(static::escape($sql), static::$connection)){
 			if(!!$data && mysql_num_rows($data)>0){
 				mysql_data_seek($data, 0);
@@ -222,7 +227,7 @@ trait MySQL{
 		}
 		static::connect();
 		if(stripos($sql, 'select')===0){
-			$r = array();
+			$r = [];
 			if($data = @mysql_query($sql, static::$connection)){
 				if(!!$data && mysql_num_rows($data)>0){
 					mysql_data_seek($data, 0);
@@ -272,15 +277,15 @@ trait MySQL{
 	
 	protected static function escape($str){
 		return str_replace(
-			array("\\","\0","\n","\r","\x1a","'",'"'),
-			array("\\\\","\\0","\\n","\\r","\Z","\'",'\"'),
+			["\\","\0","\n","\r","\x1a","'",'"'],
+			["\\\\","\\0","\\n","\\r","\Z","\'",'\"'],
 			$str
 		);
 	}		
 	protected static function unescape($str){
 		return str_replace(
-			array("\\\\","\\0","\\n","\\r","\Z","\'",'\"'),
-			array("\\","\0","\n","\r","\x1a","'",'"'),
+			["\\\\","\\0","\\n","\\r","\Z","\'",'\"'],
+			["\\","\0","\n","\r","\x1a","'",'"'],
 			$str
 		);
 	}
