@@ -53,8 +53,9 @@ trait Router{
 			foreach (explode('|', $method) as $met) {
 				$m = strtoupper($met);
 				$a = static::$map[$m];
+				$c = explode('/', $pattern);
 				array_push($a, (object) [
-					'pattern' => explode('/', $pattern),
+					'pattern' => array_splice($c, 1),
 					'callback' => $fn,
 				]);
 				static::$map[$m] = $a;
@@ -71,35 +72,63 @@ trait Router{
 		$p = Path::get();
 		
 		$maps = static::$map[$m];
-		
 		if(!!$maps && is_array($maps) && count($maps)>0){
+			
+			$matching = '';
+			
+			for($i=count($p)-1;$i>=0;$i--){
+				if(!$p[$i]){
+					array_splice($p, $i, 1);
+				}
+			}
+			
+			$uri = implode('/', $p);
+			$min = 1000;
+			
 			foreach($maps as $map){
+				$num = 0;
+				$pattern = $map->pattern;
+				for($i=count($pattern)-1;$i>=0;$i--){
+					if(strpos($pattern[$i], ':')===0){
+						$pattern[$i] = '(\w+)';
+						$num++;
+					}
+				}
+				$sroute = implode('/', $pattern);
+				$matcount = 0;
+				for($j=0;$j<count($pattern);$j++){
+					if($pattern[$j]=='(\w+)' || $p[$j]==$pattern[$j]){
+						$matcount++;
+						continue;
+					}
+				}
+				if($matcount==count($pattern)){
+					if(preg_match_all('#^' . $sroute . '$#', $uri, $matches)){
+						if($num<$min){
+							$min = $num;
+							$matching = (object) [
+								'route' => $map, 
+								'data' => array_slice($matches, 1)
+							];	
+						}		
+					}			
+				}
+			}
+			
+			if(!!$matching && is_object($matching)){
 				$args = [];
-				for($i=0;$i<count($map->pattern);$i++){
-					$pi = $map->pattern[$i];
-					$ar = explode(':', $pi);
-					if(count($ar)>1){
-						array_push($args, $p[$i]);
-					}
-					else{
-						if($pi==static::$base){
-							continue;
-						}
-						if($pi==$p[$i]){
-							array_push($args, $pi);
-						}
-						else{
-							break;
-						}
-					}
+				$matches = property_exists($matching, 'data')?$matching->data:[];
+				foreach($matches as $val){
+					array_push($args, $val[0]);
 				}
-				if(count($args)>0){
-					call_user_func_array($map->callback, $args);
-				}
+				
+				$fn = $matching->route->callback;
+				call_user_func_array($fn, $args);
 			}
 		}
 		if($m=='HEAD'){
 			ob_end_clean();
 		}
+		return Bella::end();
 	}
 }

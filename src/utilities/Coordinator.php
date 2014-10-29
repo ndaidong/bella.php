@@ -56,11 +56,10 @@ class Coordinator{
 	}
 	
 	protected function route($method, $regex, $callback){
-		Router::add($method, $this->_name.'/'.$regex, $callback);
+		Router::add($method, $regex, $callback);
 	}
 	
 	public function start(){
-		Router::mount($this->_name);
 		Router::parse();
 	}
 		

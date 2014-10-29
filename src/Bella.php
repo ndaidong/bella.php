@@ -4,6 +4,8 @@ namespace Bella;
 
 class Bella{
 	
+	private static $routeDir = '';
+	
 	public static function createId($len=16, $prefix='', $withUnderscore=false){
 		$base = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ9876543210'.($withUnderscore?'_':'').'abcdefghijklmnopqrstuvwxyz';
 		$max = strlen($base)-1;
@@ -249,6 +251,11 @@ class Bella{
 		@flush();
 	}	
 	
+	public static function translateRouteDir($path=''){
+		static::$routeDir = $path;
+		Router::mount($path);
+	}
+	
 	public static function loadCoordinator($c, $m = 'parse'){
 		$ctrl = false;
 		$class = 'Bella\\'.$c.'Controller';
@@ -258,6 +265,9 @@ class Bella{
 		}
 		else{
 			$dir = Config::get('settings')->controllers_dir;
+			if(!!static::$routeDir){
+				$dir.=static::$routeDir;
+			}
 			$f = $dir.$c.'.php';
 			if(file_exists($f)){
 				include $f;
@@ -287,6 +297,9 @@ class Bella{
 		}
 		else{
 			$dir = Config::get('settings')->models_dir;
+			if(!!static::$routeDir){
+				$dir.=static::$routeDir;
+			}
 			$f = $dir.$h.'.php';
 			if(file_exists($f)){
 				include $f;
