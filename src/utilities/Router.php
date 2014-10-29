@@ -63,6 +63,25 @@ trait Router{
 		}
 	}
 	
+	public static function get($pattern, $fn){
+		static::add('GET', $pattern, $fn);
+	}
+	public static function post($pattern, $fn){
+		static::add('POST', $pattern, $fn);
+	}
+	public static function put($pattern, $fn){
+		static::add('PUT', $pattern, $fn);
+	}
+	public static function delete($pattern, $fn){
+		static::add('DELETE', $pattern, $fn);
+	}
+	public static function request($pattern, $fn){
+		static::add('GET|POST', $pattern, $fn);
+	}
+	public static function all($pattern, $fn){
+		static::add('GET|POST|PUT|DELETE', $pattern, $fn);
+	}
+	
 	public static function mount($path){
 		static::$base = $path;
 	}

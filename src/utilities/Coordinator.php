@@ -6,8 +6,6 @@ class Coordinator{
 	
 	private $AS = 0; // accessible scope, default is 0 that means no limit
 	private $_name = '';
-	
-	protected $routes = [];
 
 	public function setAccessibleScope($as){
 		$this->AS = $as;
@@ -57,6 +55,15 @@ class Coordinator{
 	
 	protected function route($method, $regex, $callback){
 		Router::add($method, $regex, $callback);
+	}
+	protected function get($regex, $callback){
+		Router::get($regex, $callback);
+	}
+	protected function post($regex, $callback){
+		Router::post($regex, $callback);
+	}
+	protected function all($regex, $callback){
+		Router::all($regex, $callback);
 	}
 	
 	public function start(){
