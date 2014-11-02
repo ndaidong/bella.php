@@ -16,7 +16,7 @@ trait Cookie{
 		if(isset($_COOKIE[$name])){
 			unset($_COOKIE[$name]);
 		}
-        return static::set($name, NULL, time()-3600);
+		static::set($name, NULL, time()-3600);
     }
     public static function removeAll(){
 		$cookiesSet = array_keys($_COOKIE);

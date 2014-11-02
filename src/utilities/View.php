@@ -36,7 +36,7 @@ class View{
 		$this->data['meta'] = (object) [
 			'server'	=> Config::get('server'),
 			'domain'	=> Config::get('domain'),
-			'home'		=> 'http://'.$_SERVER['SERVER_NAME'].$config->baseDir,
+			'home'		=> '//'.$_SERVER['SERVER_NAME'].$config->baseDir,
 			'baseDir'	=> $config->baseDir,
 			'tracking'	=> $config->tracking
 		];	
@@ -220,7 +220,7 @@ class View{
 			if(isset($conf->cssCacheDir)){
 				$aStyle = [];
 				$cssKey = md5(implode(";", $localCSS));
-				$file = $conf->cssCacheDir.$cssKey;
+				$file = $conf->cssCacheDir.$cssKey.'.css';
 				$style = '';
 				foreach($localCSS as $f){
 					$f = substr($f, 1);
@@ -232,7 +232,7 @@ class View{
 				$style = str_replace(': ', ':', $style);
 				$style = str_replace(array("\r\n", "\r", "\n", "\t", '  ', '    ', '    '), '', $style);					
 				File::write($file, $style);
-				$tplStyle.='<link rel="stylesheet" type="text/css" href="'.$conf->baseDir.'cstyle/'.$cssKey.'">';
+				$tplStyle.='<link rel="stylesheet" type="text/css" href="'.$conf->baseDir.$file.'">';
 			}
 			else{
 				$aStyle = [];
