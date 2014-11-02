@@ -6,12 +6,12 @@ trait Router{
 	
 	private static $base = '';
 	private static $map = [
-		'GET' => [],
-		'POST' => [],
-		'PUT' => [],
-		'DELETE' => [],
-		'HEAD' => [],
-		'OPTIONS' => [],
+		'GET' 		=> [],
+		'POST' 		=> [],
+		'PUT' 		=> [],
+		'DELETE' 	=> [],
+		'HEAD' 		=> [],
+		'OPTIONS' 	=> [],
 	];
 	
 	
@@ -115,14 +115,15 @@ trait Router{
 				}
 				$sroute = implode('/', $pattern);
 				$matcount = 0;
-				for($j=0;$j<count($pattern);$j++){
+				$min = min(count($pattern), count($p));
+				for($j=0;$j<$min;$j++){
 					if($pattern[$j]=='(\w+)' || $p[$j]==$pattern[$j]){
 						$matcount++;
 						continue;
 					}
 				}
 				if($matcount==count($pattern)){
-					if(preg_match_all('#^' . $sroute . '$#', $uri, $matches)){
+					if(preg_match_all('#^'.$sroute.'$#', $uri, $matches)){
 						if($num<$min){
 							$min = $num;
 							$matching = (object) [
