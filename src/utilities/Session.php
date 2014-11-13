@@ -6,10 +6,11 @@ trait Session{
 	
 	private static $key = '';
 	
-	public static function init(){	
+	public static function init(){
 		
 		$rootDomain = '.'.Config::get('domain');
 		ini_set('session.gc_maxlifetime', 60*60*24*30);
+		session_cache_limiter('none');
 		$currentCookieParams = session_get_cookie_params();
 		session_set_cookie_params( 
 			$currentCookieParams["lifetime"], 
