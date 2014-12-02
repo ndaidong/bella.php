@@ -172,13 +172,12 @@ trait MySQL{
 				$_mysql = $database;
 			}
 			else{
-				$_databases = Config::get('databases');
-				$_mysql = (object) $_databases->mysql;
+				$config = Config::get('mysql');
 			}
-			static::$server	= $_mysql->server;
-			static::$db		= $_mysql->dbname;
-			static::$user	= $_mysql->username;
-			static::$pass	= $_mysql->password;
+			static::$server	= $config->server;
+			static::$db		= $config->dbname;
+			static::$user	= $config->username;
+			static::$pass	= $config->password;
 		}
 		if(!static::$connection){
 			$c = @mysql_connect(static::$server, static::$user, static::$pass);
@@ -199,25 +198,9 @@ trait MySQL{
 		}
 	}	
 	
-	public static function execute($sql){
+	public static function execute($sql, $params=false){
 		static::connect();
-		$r = [];
-		if($data = @mysql_query(static::escape($sql), static::$connection)){
-			if(!!$data && mysql_num_rows($data)>0){
-				mysql_data_seek($data, 0);
-				while($row = mysql_fetch_assoc($data)){
-					foreach($row as $key => $val){
-						$row[$key] = static::unescape($val);
-					}
-					array_push($r, $row);
-				}
-			}
-			mysql_free_result($data);
-		}
-		else{
-			static::showError('Invalid query: ' .mysql_error()."\n\n".$sql);
-		}
-		static::disconnect();
+		$r = static::query($sql, $params, true);
 		return $r;		
 	}
 	
