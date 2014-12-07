@@ -7,9 +7,6 @@
     "minimum-stability": "dev",
     "prefer-stable": true,
     "license": "MIT",
-    "require": {
-		"php": ">=5.4"
-    },
     "require-dev": {
 		
     },
