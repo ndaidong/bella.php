@@ -358,9 +358,15 @@ class Bella{
         $q = Config::get('settings');
         if(is_dir($q->requires_dir)){
 			foreach(glob($q->requires_dir.'*.php') as $file){
+				 include_once $file;			}
+
+		}
+        if(is_dir($q->utils_dir)){
+			foreach(glob($q->utils_dir.'*.php') as $file){
 				 include_once $file;
 			}
 		}
+				
         Session::init();
         Path::init();
         Request::init();
@@ -368,7 +374,15 @@ class Bella{
 		if(isset($onstart) && is_callable($onstart)){
 			$onstart();
 		}
-		
+
+		$user = Session::get('user');
+		if(!$user){
+			$user = Session::get('manager');
+		}
+		if(!!$user){
+			Context::set('user', $user);
+		}
+				
 		$c = Path::get(0);
 		if(!$c){
 			Bella::loadCoordinator('index');

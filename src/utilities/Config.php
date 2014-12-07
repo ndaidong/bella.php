@@ -95,6 +95,9 @@ class Config{
 	}
 	
 	public static function get($key){
+		if(!$key){
+			return self::$config;
+		}
 		$val = isset(static::$config->$key)?static::$config->$key:false;
 		return is_array($val)?(object) $val:$val;
 	}
